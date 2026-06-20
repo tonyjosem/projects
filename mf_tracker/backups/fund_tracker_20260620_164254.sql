@@ -1,0 +1,90 @@
+-- MySQL dump 10.13  Distrib 9.6.0, for macos26.4 (arm64)
+--
+-- Host: 127.0.0.1    Database: fund_tracker
+-- ------------------------------------------------------
+-- Server version	9.6.0
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!50503 SET NAMES utf8mb4 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `fund_entries`
+--
+
+DROP TABLE IF EXISTS `fund_entries`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `fund_entries` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `fund_id` int NOT NULL,
+  `date` date NOT NULL,
+  `principal` float NOT NULL,
+  `current_value` float NOT NULL,
+  `gains` float NOT NULL,
+  `gains_percent` float NOT NULL,
+  `created_at` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `ix_fund_entries_date` (`date`),
+  KEY `ix_fund_entries_fund_id` (`fund_id`),
+  CONSTRAINT `fund_entries_ibfk_1` FOREIGN KEY (`fund_id`) REFERENCES `funds` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `fund_entries`
+--
+
+LOCK TABLES `fund_entries` WRITE;
+/*!40000 ALTER TABLE `fund_entries` DISABLE KEYS */;
+INSERT INTO `fund_entries` VALUES (1,1,'2026-03-07',1497290,2188700,691408,46.1773,'2026-06-20 01:47:31'),(2,1,'2026-03-10',1497290,2157180,659893,44.0725,'2026-06-20 01:48:28'),(3,1,'2026-06-19',1557290,2290780,733490,47.1004,'2026-06-20 01:52:22'),(4,1,'2026-03-11',1497290,2178670,681384,45.5078,'2026-06-20 01:53:49'),(5,1,'2026-04-20',1527290,2244420,717126,46.9542,'2026-06-20 01:54:15'),(6,1,'2026-05-30',1542290,2245800,703511,45.6147,'2026-06-20 01:54:39'),(7,2,'2026-03-07',1515320,2620630,1105300,72.9416,'2026-06-20 01:55:40'),(8,2,'2026-05-30',1523850,2625090,1101240,72.2665,'2026-06-20 01:55:56'),(9,2,'2026-03-13',1515320,2528000,1012670,66.8288,'2026-06-20 01:56:19'),(10,2,'2026-04-14',1515320,2528000,1012670,66.8288,'2026-06-20 01:56:37'),(11,3,'2026-03-07',224988,233061,8073,3.58819,'2026-06-20 04:19:18'),(12,3,'2026-03-10',224988,228831,3843,1.70809,'2026-06-20 04:19:48'),(13,3,'2026-04-14',224988,223292,-1696,-0.753818,'2026-06-20 04:20:19'),(14,4,'2026-03-07',461008,577974,116966,25.3718,'2026-06-20 04:24:26'),(15,4,'2026-03-11',461008,577856,116848,25.3462,'2026-06-20 04:26:59'),(16,4,'2026-05-29',465008,584598,119590,25.7178,'2026-06-20 04:27:19'),(17,3,'2026-06-20',224989,244095,19106,8.49198,'2026-06-20 04:31:21');
+/*!40000 ALTER TABLE `fund_entries` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `funds`
+--
+
+DROP TABLE IF EXISTS `funds`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `funds` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `name` varchar(120) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `created_at` datetime NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `name` (`name`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `funds`
+--
+
+LOCK TABLES `funds` WRITE;
+/*!40000 ALTER TABLE `funds` DISABLE KEYS */;
+INSERT INTO `funds` VALUES (1,'fundindia','2026-06-20 01:46:56'),(2,'HDFC','2026-06-20 01:55:22'),(3,'Zeroda','2026-06-20 04:18:43'),(4,'Cl_fundsindia','2026-06-20 04:23:54');
+/*!40000 ALTER TABLE `funds` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Dumping routines for database 'fund_tracker'
+--
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2026-06-20 16:42:54

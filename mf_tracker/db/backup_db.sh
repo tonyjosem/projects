@@ -1,6 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Load .env file if it exists
+if [[ -f "$(dirname "$0")/../.env" ]]; then
+  set -a
+  source "$(dirname "$0")/../.env"
+  set +a
+fi
+
 DB_HOST="${DB_HOST:-127.0.0.1}"
 DB_PORT="${DB_PORT:-3306}"
 DB_NAME="${DB_NAME:-fund_tracker}"
@@ -17,6 +24,7 @@ if [[ -z "${DB_PASSWORD:-}" ]]; then
 fi
 
 mysqldump -h "$DB_HOST" -P "$DB_PORT" -u "$DB_USER" -p"$DB_PASSWORD" \
-  --single-transaction --routines --triggers "$DB_NAME" > "$OUT_FILE"
+  --single-transaction --skip-lock-tables --set-gtid-purged=OFF \
+  --routines --triggers "$DB_NAME" > "$OUT_FILE"
 
 echo "Backup created: $OUT_FILE"

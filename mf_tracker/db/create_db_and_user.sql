@@ -17,4 +17,9 @@ GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, INDEX, DROP, REFERENCES
 GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, ALTER, INDEX, DROP, REFERENCES
   ON fund_tracker.* TO 'fund_app'@'%';
 
+-- Required by mysqldump --single-transaction (MySQL 8.0.24+).
+-- Use RELOAD instead of FLUSH_TABLES on MySQL < 8.0.24.
+GRANT FLUSH_TABLES ON *.* TO 'fund_app'@'localhost';
+GRANT FLUSH_TABLES ON *.* TO 'fund_app'@'%';
+
 FLUSH PRIVILEGES;
