@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard | Fund Tracker{% endblock %}
+
+{% block content %}
+<section class="hero glass-card reveal">
+  <div>
+    <h1>Portfolio Command Center</h1>
+    <p>Track each fund with clarity, trend visibility, and one-click export.</p>
+  </div>
+</section>
+
+<section class="section-head reveal">
+  <h2>Your Funds</h2>
+  <span class="pill">{{ funds|length }} funds</span>
+</section>
+
+<section class="fund-grid reveal-stagger">
+  {% if funds %}
+    {% for fund in funds %}
+      <a class="fund-tile glass-card" href="{{ url_for('web.fund_detail', fund_id=fund.id) }}">
+        <h3>{{ fund.name }}</h3>
+        {% if fund.latest_entry %}
+          <p>Latest Date: {{ fund.latest_entry.date.strftime('%d/%m/%Y') }}</p>
+          <div class="metric-row">
+            <div>
+              <span>Current Value</span>
+              <strong>{{ "%.2f"|format(fund.latest_entry.current_value) }}</strong>
+            </div>
+            <div>
+              <span>Gains %</span>
+              <strong class="{{ 'positive' if fund.latest_entry.gains_percent >= 0 else 'negative' }}">
+                {{ "%.2f"|format(fund.latest_entry.gains_percent) }}%
+              </strong>
+            </div>
+          </div>
+        {% else %}
+          <p>No data yet. Click to add the first entry.</p>
+        {% endif %}
+      </a>
+    {% endfor %}
+  {% else %}
+    <div class="glass-card empty-state">
+      <h3>No funds added yet</h3>
+      <p>Use the + button to create your first fund.</p>
+    </div>
+  {% endif %}
+</section>
+
+<button id="add-fund-trigger" class="add-fund-btn" aria-label="Add fund">+</button>
+
+<div id="add-fund-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="add-fund-title">
+  <div class="modal-card glass-card">
+    <h3 id="add-fund-title">Add Fund</h3>
+    <form action="{{ url_for('web.add_fund') }}" method="post" class="form-grid">
+      <label>
+        Fund Name
+        <input type="text" name="name" placeholder="Example: Growth Alpha Fund" required />
+      </label>
+      <div class="actions">
+        <button type="button" class="btn subtle" id="close-add-fund">Cancel</button>
+        <button type="submit" class="btn primary">Create Fund</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
