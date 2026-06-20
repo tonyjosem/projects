@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block title %}{{ fund.name }} | Fund Tracker{% endblock %}
+
+{% block content %}
+<section class="section-head reveal">
+  <div>
+    <h1>{{ fund.name }}</h1>
+    <p>Deep view of allocations, movement, and returns.</p>
+  </div>
+  <a class="btn primary" href="{{ url_for('web.export_fund_excel', fund_id=fund.id) }}">Export Excel Dashboard</a>
+</section>
+
+<section class="detail-layout">
+  <article class="glass-card reveal">
+    <h2>Add Data</h2>
+    <form action="{{ url_for('web.add_entry', fund_id=fund.id) }}" method="post" class="form-grid two-col">
+      <label>
+        Date
+        <input type="date" name="date" required />
+      </label>
+      <label>
+        Principal
+        <input type="number" name="principal" step="0.01" required />
+      </label>
+      <label>
+        Current Value
+        <input type="number" name="current_value" step="0.01" required />
+      </label>
+      <label>
+        Gains
+        <input type="number" name="gains" step="0.01" placeholder="Optional (auto if blank)" />
+      </label>
+      <label>
+        Gains %
+        <input type="number" name="gains_percent" step="0.01" placeholder="Optional (auto if blank)" />
+      </label>
+      <div class="actions full-width">
+        <button type="submit" class="btn primary">Add Entry</button>
+      </div>
+    </form>
+  </article>
+
+  <article class="glass-card reveal">
+    <h2>Performance Graph</h2>
+    {% if entries %}
+      <div class="chart-wrap">
+        <canvas id="fundChart"></canvas>
+      </div>
+    {% else %}
+      <p>No graph yet. Add entries to visualize trends.</p>
+    {% endif %}
+  </article>
+</section>
+
+<section class="glass-card reveal">
+  <h2>Entries</h2>
+  {% if entries %}
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Principal</th>
+            <th>Current Value</th>
+            <th>Gains</th>
+            <th>Gains %</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for entry in entries %}
+            <tr>
+              <td>{{ entry.date.strftime('%d/%m/%Y') }}</td>
+              <td>{{ "%.2f"|format(entry.principal) }}</td>
+              <td>{{ "%.2f"|format(entry.current_value) }}</td>
+              <td>{{ "%.2f"|format(entry.gains) }}</td>
+              <td class="{{ 'positive' if entry.gains_percent >= 0 else 'negative' }}">
+                {{ "%.2f"|format(entry.gains_percent) }}%
+              </td>
+              <td>
+                <div class="entry-actions">
+                  <a class="btn subtle btn-small" href="{{ url_for('web.edit_entry_page', fund_id=fund.id, entry_id=entry.id) }}">Edit</a>
+                  <form action="{{ url_for('web.delete_entry', fund_id=fund.id, entry_id=entry.id) }}" method="post" onsubmit="return confirm('Delete this entry?');">
+                    <button type="submit" class="btn danger btn-small">Delete</button>
+                  </form>
+                </div>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <p>No entries available for this fund yet.</p>
+  {% endif %}
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  window.fundChartData = {
+    labels: {{ chart_dates|tojson }},
+    principal: {{ principal_data|tojson }},
+    currentValue: {{ current_value_data|tojson }},
+    gains: {{ gains_data|tojson }}
+  };
+</script>
+{% endblock %}
