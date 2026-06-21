@@ -165,7 +165,7 @@ p {
 
 .detail-layout {
   display: grid;
-  grid-template-columns: 1.2fr 1fr;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1rem;
 }
 
@@ -244,6 +244,39 @@ input {
   margin: 0;
 }
 
+.icon-btn {
+  width: 34px;
+  height: 34px;
+  display: inline-grid;
+  place-items: center;
+  border-radius: 10px;
+  border: 0;
+  text-decoration: none;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: transform 160ms ease, box-shadow 160ms ease, filter 160ms ease;
+}
+
+.icon-btn:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.02);
+}
+
+.icon-btn:focus-visible {
+  outline: 2px solid rgba(11, 94, 168, 0.55);
+  outline-offset: 2px;
+}
+
+.icon-edit {
+  background: rgba(24, 95, 157, 0.14);
+  color: #0b5ea8;
+}
+
+.icon-delete {
+  background: rgba(184, 54, 75, 0.14);
+  color: #b8364b;
+}
+
 .table-wrap {
   overflow-x: auto;
 }
@@ -295,14 +328,33 @@ td {
   display: grid;
   place-items: center;
   padding: 1rem;
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transition: opacity 180ms ease, visibility 180ms ease;
 }
 
 .modal.hidden {
-  display: none;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.modal-card {
+  transform: translateY(0) scale(1);
+  transition: transform 220ms ease;
+}
+
+.modal.hidden .modal-card {
+  transform: translateY(14px) scale(0.96);
 }
 
 .modal-card {
   width: min(460px, 96%);
+}
+
+.modal-card-wide {
+  width: min(760px, 98%);
 }
 
 .toast-stack {

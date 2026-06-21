@@ -1,25 +1,46 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const modal = document.getElementById("add-fund-modal");
-  const trigger = document.getElementById("add-fund-trigger");
-  const closeBtn = document.getElementById("close-add-fund");
+  const bindModal = (modalId, triggerId, closeId) => {
+    const modal = document.getElementById(modalId);
+    const trigger = document.getElementById(triggerId);
+    const closeBtn = document.getElementById(closeId);
 
-  if (modal && trigger) {
+    if (!modal || !trigger) {
+      return;
+    }
+
     trigger.addEventListener("click", () => {
       modal.classList.remove("hidden");
+      const focusTarget =
+        modal.querySelector('input[type="date"]') ||
+        modal.querySelector("input, button, select, textarea");
+      if (focusTarget) {
+        requestAnimationFrame(() => focusTarget.focus());
+      }
     });
-  }
 
-  if (modal && closeBtn) {
-    closeBtn.addEventListener("click", () => {
-      modal.classList.add("hidden");
-    });
+    if (closeBtn) {
+      closeBtn.addEventListener("click", () => {
+        modal.classList.add("hidden");
+      });
+    }
 
     modal.addEventListener("click", (event) => {
       if (event.target === modal) {
         modal.classList.add("hidden");
+        trigger.focus();
       }
     });
-  }
+
+    modal.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        modal.classList.add("hidden");
+        trigger.focus();
+      }
+    });
+  };
+
+  bindModal("add-fund-modal", "add-fund-trigger", "close-add-fund");
+  bindModal("add-entry-modal", "add-entry-trigger", "close-add-entry");
 
   const canvas = document.getElementById("fundChart");
   if (canvas && window.fundChartData) {
@@ -56,6 +77,53 @@ document.addEventListener("DOMContentLoaded", () => {
             backgroundColor: "rgba(214, 124, 23, 0.12)",
             fill: true,
             tension: 0.25,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: false,
+        plugins: {
+          legend: {
+            labels: {
+              usePointStyle: true,
+            },
+          },
+        },
+      },
+    });
+  }
+
+  const barCanvas = document.getElementById("fundBarChart");
+  if (barCanvas && window.fundChartData) {
+    const data = window.fundChartData;
+    if (window.fundBarChartInstance) {
+      window.fundBarChartInstance.destroy();
+    }
+
+    window.fundBarChartInstance = new Chart(barCanvas, {
+      type: "bar",
+      data: {
+        labels: data.labels,
+        datasets: [
+          {
+            label: "Principal",
+            data: data.principal,
+            backgroundColor: "rgba(24, 95, 157, 0.74)",
+            borderRadius: 6,
+          },
+          {
+            label: "Current Value",
+            data: data.currentValue,
+            backgroundColor: "rgba(15, 157, 110, 0.74)",
+            borderRadius: 6,
+          },
+          {
+            label: "Gains",
+            data: data.gains,
+            backgroundColor: "rgba(214, 124, 23, 0.74)",
+            borderRadius: 6,
           },
         ],
       },

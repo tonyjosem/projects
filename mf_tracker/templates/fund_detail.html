@@ -13,35 +13,6 @@
 
 <section class="detail-layout">
   <article class="glass-card reveal">
-    <h2>Add Data</h2>
-    <form action="{{ url_for('web.add_entry', fund_id=fund.id) }}" method="post" class="form-grid two-col">
-      <label>
-        Date
-        <input type="date" name="date" required />
-      </label>
-      <label>
-        Principal
-        <input type="number" name="principal" step="0.01" required />
-      </label>
-      <label>
-        Current Value
-        <input type="number" name="current_value" step="0.01" required />
-      </label>
-      <label>
-        Gains
-        <input type="number" name="gains" step="0.01" placeholder="Optional (auto if blank)" />
-      </label>
-      <label>
-        Gains %
-        <input type="number" name="gains_percent" step="0.01" placeholder="Optional (auto if blank)" />
-      </label>
-      <div class="actions full-width">
-        <button type="submit" class="btn primary">Add Entry</button>
-      </div>
-    </form>
-  </article>
-
-  <article class="glass-card reveal">
     <h2>Performance Graph</h2>
     {% if entries %}
       <div class="chart-wrap">
@@ -49,6 +20,17 @@
       </div>
     {% else %}
       <p>No graph yet. Add entries to visualize trends.</p>
+    {% endif %}
+  </article>
+
+  <article class="glass-card reveal">
+    <h2>Performance Bar Diagram</h2>
+    {% if entries %}
+      <div class="chart-wrap">
+        <canvas id="fundBarChart"></canvas>
+      </div>
+    {% else %}
+      <p>No bar diagram yet. Add entries to compare values.</p>
     {% endif %}
   </article>
 </section>
@@ -80,9 +62,18 @@
               </td>
               <td>
                 <div class="entry-actions">
-                  <a class="btn subtle btn-small" href="{{ url_for('web.edit_entry_page', fund_id=fund.id, entry_id=entry.id) }}">Edit</a>
+                  <a
+                    class="icon-btn icon-edit"
+                    href="{{ url_for('web.edit_entry_page', fund_id=fund.id, entry_id=entry.id) }}"
+                    aria-label="Edit entry"
+                    title="Edit"
+                  >
+                    <span aria-hidden="true">✏</span>
+                  </a>
                   <form action="{{ url_for('web.delete_entry', fund_id=fund.id, entry_id=entry.id) }}" method="post" onsubmit="return confirm('Delete this entry?');">
-                    <button type="submit" class="btn danger btn-small">Delete</button>
+                    <button type="submit" class="icon-btn icon-delete" aria-label="Delete entry" title="Delete">
+                      <span aria-hidden="true">🗑</span>
+                    </button>
                   </form>
                 </div>
               </td>
@@ -95,6 +86,40 @@
     <p>No entries available for this fund yet.</p>
   {% endif %}
 </section>
+
+<button id="add-entry-trigger" class="add-fund-btn" aria-label="Add entry">+</button>
+
+<div id="add-entry-modal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="add-entry-title">
+  <div class="modal-card modal-card-wide glass-card">
+    <h3 id="add-entry-title">Add Data</h3>
+    <form action="{{ url_for('web.add_entry', fund_id=fund.id) }}" method="post" class="form-grid two-col">
+      <label>
+        Date
+        <input type="date" name="date" required />
+      </label>
+      <label>
+        Principal
+        <input type="number" name="principal" step="0.01" required />
+      </label>
+      <label>
+        Current Value
+        <input type="number" name="current_value" step="0.01" required />
+      </label>
+      <label>
+        Gains
+        <input type="number" name="gains" step="0.01" placeholder="Optional (auto if blank)" />
+      </label>
+      <label>
+        Gains %
+        <input type="number" name="gains_percent" step="0.01" placeholder="Optional (auto if blank)" />
+      </label>
+      <div class="actions full-width">
+        <button type="button" class="btn subtle" id="close-add-entry">Cancel</button>
+        <button type="submit" class="btn primary">Add Entry</button>
+      </div>
+    </form>
+  </div>
+</div>
 {% endblock %}
 
 {% block scripts %}
